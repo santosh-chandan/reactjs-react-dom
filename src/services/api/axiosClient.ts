@@ -8,8 +8,9 @@ import type {
 
 // --- Create base instance ---
 const axiosBase = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "https://api.example.com/v1",
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:4001/api",
   headers: { "Content-Type": "application/json" },
+  withCredentials: true,
 });
 
 // --- Request interceptor: attach access token ---
@@ -34,7 +35,7 @@ axiosBase.interceptors.response.use(
         if (refreshToken) {
           // Use raw axios to avoid recursion
           const res = await axios.post<{ access_token: string }>(
-            `${import.meta.env.VITE_API_URL || "https://api.example.com/v1"}/auth/refresh`,
+            `${import.meta.env.VITE_API_URL || "http://localhost:4001/api"}/auth/refresh`,
             { refresh_token: refreshToken }
           );
 

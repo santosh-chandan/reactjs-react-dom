@@ -1,16 +1,29 @@
 // src/features/auth/components/LoginForm.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuthStore } from "../../../store/useAuthStore";
+import { useNavigate } from "react-router-dom";
 
 const LoginForm: React.FC = () => {
-  const { login, loading, error } = useAuthStore();
+  const {user, login, loading, error } = useAuthStore();
   const [email, setEmail] = useState("");
+  const navigate = useNavigate();
   const [password, setPassword] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
+const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await login(email, password);
+    try {
+      await login(email, password);
+      // redirect on success
+      navigate("/user/info"); // or whatever your protected route is
+    } catch (err) {
+      console.error("Login failed:", err);
+    }
   };
+  useEffect( () => {
+    if (user) {
+      navigate("/user/info");
+    }
+  },[user,navigate]);
 
   return (
     <form
