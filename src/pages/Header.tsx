@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
-import { Link, NavLink } from 'react-router-dom';
-import { Search } from 'lucide-react';
+import React from "react";
+import { Link, NavLink } from "react-router-dom";
+import { Search } from "lucide-react";
+import { useAuthStore } from "../store/useAuthStore";
 
 const Header: React.FC = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { user, logout } = useAuthStore();
+  const isLoggedIn = !!user;
 
   return (
     <header className="w-full shadow-md">
@@ -34,12 +36,22 @@ const Header: React.FC = () => {
 
             {/* Auth Buttons */}
             {isLoggedIn ? (
-              <button
-                onClick={() => setIsLoggedIn(false)}
-                className="bg-blue-500 hover:bg-blue-400 text-white px-4 py-2 rounded-lg transition"
-              >
-                Logout
-              </button>
+              <>
+                {/* 👇 Profile link (only when logged in) */}
+                <Link
+                  to="/profile"
+                  className="px-4 py-2 bg-blue-500 hover:bg-blue-400 rounded-lg transition"
+                >
+                  {user?.name ? `Hi, ${user.name}` : "Profile"}
+                </Link>
+
+                <button
+                  onClick={logout}
+                  className="bg-blue-500 hover:bg-blue-400 text-white px-4 py-2 rounded-lg transition"
+                >
+                  Logout
+                </button>
+              </>
             ) : (
               <>
                 <Link
@@ -65,9 +77,10 @@ const Header: React.FC = () => {
         <nav className="max-w-4xl mx-auto px-6">
           <ul className="flex items-center gap-8 py-3">
             {[
-              { path: '/', label: 'Home' },
-              { path: '/about', label: 'About' },
-              { path: '/contact', label: 'Contact' },
+              { path: "/", label: "Home" },
+              { path: "/about", label: "About" },
+              { path: "/contact", label: "Contact" },
+              ...(isLoggedIn ? [{ path: "/profile", label: "Profile" }] : []), // 👈 Conditionally add
             ].map((link) => (
               <li key={link.path}>
                 <NavLink
@@ -75,8 +88,8 @@ const Header: React.FC = () => {
                   className={({ isActive }) =>
                     `text-lg hover:text-blue-100 transition ${
                       isActive
-                        ? 'text-white font-semibold border-b-2 border-blue-200 pb-1'
-                        : ''
+                        ? "text-white font-semibold border-b-2 border-blue-200 pb-1"
+                        : ""
                     }`
                   }
                 >

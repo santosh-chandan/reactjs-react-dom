@@ -1,31 +1,21 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuthStore } from "../../../store/useAuthStore";
-import authApi from "../../../services/api/authApi";
 
 const AuthInitializer: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { setUser, setToken } = useAuthStore();
+  const checkAuth = useAuthStore((state) => state.checkAuth);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-  const initAuth = async () => {
-    try {
-      const refreshRes = await authApi.refresh();
-      const newAccessToken = refreshRes.accessToken;
-      console.log("New access token:", newAccessToken);
-      if (!newAccessToken) throw new Error("No access token returned");
-      setToken(newAccessToken);
+    (async () => {
+      await checkAuth();   // call Zustand's checkAuth
+      setLoading(false);
+    })();
+  }, [checkAuth]);
 
-      const meRes = await authApi.getMe(newAccessToken);
-      setUser(meRes.user);
-    } catch (err) {
-      console.warn("Auth initialization failed:", err);
-      setUser(null);
-      setToken(null);
-    }
-  };
-
-  initAuth();
-}, [setUser, setToken]);
-
+  if (loading) {
+    // optional splash/loading screen
+    return <div className="h-screen flex items-center justify-center">Loading...</div>;
+  }
 
   return <>{children}</>;
 };

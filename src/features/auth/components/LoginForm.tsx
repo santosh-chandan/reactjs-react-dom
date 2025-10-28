@@ -14,14 +14,14 @@ const handleSubmit = async (e: React.FormEvent) => {
     try {
       await login(email, password);
       // redirect on success
-      navigate("/user/info"); // or whatever your protected route is
+      navigate("/profile"); // or whatever your protected route is
     } catch (err) {
       console.error("Login failed:", err);
     }
   };
   useEffect( () => {
     if (user) {
-      navigate("/user/info");
+      navigate("/profile");
     }
   },[user,navigate]);
 

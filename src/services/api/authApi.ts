@@ -69,7 +69,7 @@ const authApi = {
 
   // POST /auth/logout
   logout: async (): Promise<void> => {
-    await axiosClient.post("/auth/logout");
+    await axiosClient.post("/auth/logout", {}, { withCredentials: true });
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
   },
